@@ -1,0 +1,21 @@
+{
+    "variables": [
+        "S",
+        "E"
+    ],
+    "terminals": [
+        "a",
+        "b"
+    ],
+    "productions": [
+        {
+            "variable": "S",
+            "production": "aEb"
+        },
+        {
+            "variable": "E",
+            "production": "ab"
+        }
+    ],
+    "initialVariable": "S"
+}
