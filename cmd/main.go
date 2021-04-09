@@ -1,17 +1,21 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"glc-infinite/controller/glc"
+
+	"github.com/gorilla/mux"
 )
 
 // main function program
 func main() {
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	gc := glc.NewGlcController()
-	gc.Handle(mux)
+	gc := glc.NewGlcController(router)
+	gc.Handle()
 
-	http.ListenAndServe(":8080", mux)
+	err := http.ListenAndServe(":8080", router)
+	log.Fatal(err)
 }
