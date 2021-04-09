@@ -7,8 +7,6 @@ import (
 
 	g "glc-infinite/glc"
 	e "glc-infinite/handler/err"
-	"glc-infinite/handler/header"
-	"glc-infinite/handler/recover"
 
 	"github.com/gorilla/mux"
 )
@@ -45,5 +43,5 @@ func (gc GlcController) IsInfite(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (gc GlcController) Handle() {
-	gc.router.Handle("/glc/isFinite", header.HeaderHandler(recover.RecoverHandler(e.ErrorHandler(gc.IsInfite)))).Methods("POST")
+	gc.router.Handle("/glc/isFinite", e.ErrorHandler(gc.IsInfite)).Methods("POST")
 }

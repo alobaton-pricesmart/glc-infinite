@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"glc-infinite/controller/glc"
+	"glc-infinite/handler/header"
+	"glc-infinite/handler/recover"
 
 	"github.com/gorilla/mux"
 )
@@ -12,6 +14,9 @@ import (
 // main function program
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
+
+	router.Use(header.HeaderHandler)
+	router.Use(recover.RecoverHandler)
 
 	gc := glc.NewGlcController(router)
 	gc.Handle()
