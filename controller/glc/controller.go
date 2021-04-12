@@ -5,26 +5,23 @@ import (
 	"fmt"
 	"net/http"
 
-	g "glc-infinite/glc"
-	e "glc-infinite/handler/err"
-
-	"github.com/gorilla/mux"
+	"glc-infinite/glc"
+	"glc-infinite/httperrors"
 )
 
 type GlcController struct {
-	router *mux.Router
 }
 
-func NewGlcController(router *mux.Router) *GlcController {
-	return &GlcController{router}
+func NewGlcController() *GlcController {
+	return &GlcController{}
 }
 
 func (gc GlcController) IsInfite(w http.ResponseWriter, r *http.Request) error {
-	var glc g.GLC
+	var glc glc.GLC
 
 	err := json.NewDecoder(r.Body).Decode(&glc)
 	if err != nil {
-		return e.NewHTTPError(err, 400, "Bad request: invalid JSON")
+		return httperrors.NewHTTPError(err, 400, "Bad request: invalid JSON")
 	}
 
 	finite := glc.IsFinite()
@@ -40,8 +37,4 @@ func (gc GlcController) IsInfite(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(200)
 	w.Write(body)
 	return nil
-}
-
-func (gc GlcController) Handle() {
-	gc.router.Handle("/glc/isFinite", e.ErrorHandler(gc.IsInfite)).Methods("POST")
 }
