@@ -24,7 +24,10 @@ func (gc GlcService) IsInfite(w http.ResponseWriter, r *http.Request) error {
 		return httperror.NewHTTPError(err, 400, "Bad request: invalid JSON")
 	}
 
-	finite := glc.IsFinite()
+	finite, err := glc.IsFinite()
+	if err != nil {
+		return httperror.NewHTTPError(err, 400, "Error in the provided struct")
+	}
 
 	response := make(map[string]interface{})
 	response["finite"] = finite

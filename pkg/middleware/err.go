@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // ClientError is an error whose details to be shared with client.
@@ -26,7 +27,7 @@ func ErrorHandler(next ErrorHandlerFunc) http.Handler {
 		}
 
 		// This is where our error handling logic starts.
-		log.Printf("An error accured: %v", err)
+		log.WithField("error", err).Error("an error accured")
 
 		// Check if it is a ClientError.
 		clientError, ok := err.(ClientError)
@@ -40,7 +41,7 @@ func ErrorHandler(next ErrorHandlerFunc) http.Handler {
 		// Try to get response body of ClientError.
 		body, err := clientError.ResponseBody()
 		if err != nil {
-			log.Printf("An error accured: %v", err)
+			log.WithField("error", err).Error("an error accured")
 			w.WriteHeader(500)
 			return
 		}

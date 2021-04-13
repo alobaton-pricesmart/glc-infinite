@@ -1,6 +1,8 @@
 package glc
 
 import (
+	"fmt"
+
 	"glc-infinite/pkg/strutil"
 )
 
@@ -13,23 +15,23 @@ type GLC struct {
 }
 
 // IsFinite Indica si la gramatica libre de contexto es finita o infinita
-func (g GLC) IsFinite() bool {
+func (g GLC) IsFinite() (bool, error) {
 	var expandedVariables []string
 	return g.isFinite(g.InitialVariable, expandedVariables)
 }
 
 // IsFinite Indica si la gramatica libre de contexto es finita o infinita
-func (g GLC) isFinite(variable string, expandedVariables []string) bool {
+func (g GLC) isFinite(variable string, expandedVariables []string) (bool, error) {
 	// Validamos que variable exista en variables
 	_, variableExist := strutil.Find(g.Variables, variable)
 	if !variableExist {
-		panic(variable + " not found in variables")
+		return false, fmt.Errorf("%v not found in variables", variable)
 	}
 
 	// Validamos las condiciones de parada
 	_, alreadyExpanded := strutil.Find(expandedVariables, variable)
 	if alreadyExpanded {
-		return false
+		return false, nil
 	}
 
 	// Agregamos variable a expandedVariables
@@ -42,7 +44,7 @@ func (g GLC) isFinite(variable string, expandedVariables []string) bool {
 		// Validamos que variable de production exista en variables
 		_, productionVariableExist := strutil.Find(g.Variables, production.Variable)
 		if !productionVariableExist {
-			panic(production.Variable + " not found in variables")
+			return false, fmt.Errorf("%v not found in variables", production.Variable)
 		}
 
 		if production.Variable != variable {
@@ -56,7 +58,12 @@ func (g GLC) isFinite(variable string, expandedVariables []string) bool {
 			extractedVariables := production.ExtractVariables(g.Variables)
 			// fmt.Println(extractedVariables)
 			for _, extractedVariable := range extractedVariables {
-				finite = finite && g.isFinite(extractedVariable, expandedVariables)
+				f, err := g.isFinite(extractedVariable, expandedVariables)
+				if err != nil {
+					return false, err
+				}
+
+				finite = finite && f
 			}
 		} else {
 			// Si no contiene una produccion, corresponde a un estado terminal.
@@ -64,5 +71,5 @@ func (g GLC) isFinite(variable string, expandedVariables []string) bool {
 		}
 	}
 
-	return finite
+	return finite, nil
 }
