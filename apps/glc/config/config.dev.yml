@@ -1,0 +1,4 @@
+database:
+  user: dev-user
+  password: dev-password
+  address: database:3306
