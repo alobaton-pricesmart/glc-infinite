@@ -13,7 +13,7 @@ import (
 
 func registerRoutes(r *mux.Router) {
 	glcService := glc.NewGlcService()
-	r.Handle("/isFinite", middleware.ErrorHandler(glcService.IsInfite)).Methods("POST")
+	r.Handle("/glc/isFinite", middleware.ErrorHandler(glcService.IsInfite)).Methods("POST")
 }
 
 // main function program
